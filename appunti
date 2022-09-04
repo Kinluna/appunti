@@ -337,3 +337,58 @@ let foo a b =
   let fee r = if r == 22 then 2 else 1 in 
   if a(fee, 3) == 1 && b == 2 then true else false ;;
   
+  (*Es2 - Definire una funzione fool con tipo:  
+ fool: 'a list -> int -> 'a -> a' list      
+  in modo che fool l n v sia la lista ottenuta da l rimpiazzando gli ultimi n elementi con v, e lasciando inalterati i rimanenti. 
+  Ad esempio:  fool [1;2;3;4;5;6;7;8;9;10] 3 0  = [1;2;3;4;5;6;7;0;0;0]*)
+let rec fool l n v = match (l,n) with     (*primi n elementi*)
+    ([],_) -> []
+  | (x::l , 0) -> v::(fool l n v)
+  | (x::l , _) -> x::(fool l (n-1) v);;
+(*oppure*)
+let fool l n v = List.fold_right (fun a b -> if List.length b < n then [v]@b else [a]@b) l [];;
+fool [1;2;3;4;5;6;7;8;9;10] 3 0;;
+
+(*Es3 - Completare la seguente definizione della funzione foof con tipo: 
+  'a list -> a' list  
+  let foof = List.fold_right... in modo che foof l sia la lista ottenuta da l eliminando tutti gli elementi eccetto l'ultimo. Ad esempio:
+  foof [1;2;3;4;5;6;7;8;9;10] = [10]  *)
+let rec foof = function
+    [] -> []
+  | [x] -> [x]
+  | x::xs -> (foof xs);;
+foof [1;2;3;4;5;6;7;8;9;10];;
+   (*oppure*)
+let foof l = List.fold_right (fun a b -> if List.length b = 1 then b else a::b) l [];;
+foof [1;2;3;4;5;6;7;8;9;10];;
+
+
+
+(*Esercitazione compito*)
+(*Es1 - Scrivere una funzione foo con il seguente tipo: 
+ ('a * 'b) list -> ('c * 'd) list -> ('b * 'a) list * ('d * 'c) list   *)
+let foo a b = match (a,b) with
+    (hd1::tl1, hd2::tl2) -> ( ((snd hd1),(fst hd1))::[], ((snd hd2),(fst hd2))::[] ) 
+  | _ -> ([],[]);;
+
+(*Es2 - Definire una funzione fool con il seguente tipo: 
+'a list -> 'b list -> int -> ('a * 'b) list
+  in modo che fool l1 l2 n sia la lista ottenuta accoppiando i primi n elementi (se presenti)  di l1 e l2 . 
+  Ad esempio:
+  fool [1;2;3;4] [5;6;7] 2;;
+  - : (int * int) list = [(1, 5); (2, 6)]
+  fool [1;2;3;4] [5;6;7] 3;;
+  - : (int * int) list = [(1, 5); (2, 6); (3, 7)] *)
+let rec fool l1 l2 n = match (l1,l2) with
+    (hd1::tl1, hd2::tl2) -> if n>0 then (hd1, hd2)::(fool tl1 tl2 (n-1)) else []
+  | (_,_) -> [];;
+
+(*Es3 - Completare la seguente definizione di funzione: 
+  let foof l  = List.fold_right…
+  'a list -> ('a * int) list
+in modo che foof l  sia la lista di coppie  ottenuta accoppiando ogni elemento di l con la sua posizione nella lista. 
+  Ad esempio, foof [10;20;30;40;50;60] =  [(10, 1); (20, 2); (30, 3); (40, 4); (50, 5); (60, 6)];;    *)
+let foof l = List.fold_right (fun a b -> (a, List.length l - List.length b):: b) l [];;
+foof [10;2;5;4] ;;
+
+  
